@@ -43,7 +43,6 @@ api='http://13.235.67.167:8080/';
 protected getemp = this.api +'api/employees' 
 protected leavedata = this.api +'api/employee-leaves' 
 
-
   getemployee(): Observable<any> {
     return this.http.get<any>( this.getemp , {observe: 'response' });
   }
@@ -64,5 +63,8 @@ protected leavedata = this.api +'api/employee-leaves'
   }
   search(option: any, key: string): Observable<any> {
     return this.http.get<any>(`${this.getemp}?key=${key}`, { observe: 'response' });
+  }
+  addleave(id: any,payload:any): Observable<any> {
+    return this.http.post<any>( `${this.leavedata}/${id}` ,payload, {observe: 'response' });
   }
 }

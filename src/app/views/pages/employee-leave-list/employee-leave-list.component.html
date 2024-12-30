@@ -37,7 +37,7 @@
       <th scope="row">{{i+1}}</th>
       <td (click)="openempinfo(user?.id)"><svg cIcon name="cil-pen" size="l" style="color: blue;"></svg></td>
       <td>{{user?.empName}}</td>
-      <td>{{user?.NAleaves}}</td>
+      <td>{{user?.leaves}}</td>
       <td>{{user?.appleave}}</td>
       <td>{{users?.length}}</td>
     </tr>
@@ -81,21 +81,21 @@
               <c-container
                 *ngFor="let day of daysInMonth"
                 class="day"
-                [ngStyle]="{'background-color': getColor(day.leaveType)}"
+                [ngStyle]="{'background-color': getColor(day.duration)}"
                 (click)="openLeaveDialog(day)"
               >
                 <div>{{ day.date }}</div>
-                <div *ngIf="day.leaveType">{{ day.leaveType=='Half_day_taken_and_not_applied'?'Half day taken but not applied':
-                 day.leaveType=='Half_day_taken_and_applied'?'Half day taken and applied':
-                 day.leaveType=='Full_day_taken_and_not_applied'?'Full day taken but not applied':
-                  day.leaveType=='Full_day_taken_and_applied'?'Full day taken and applied':'' }}</div>
+                <div *ngIf="day.duration">{{ day.duration=='Half_day_taken_and_not_applied'?'Half day taken but not applied':
+                 day.duration=='Half_day_taken_and_applied'?'Half day taken and applied':
+                 day.duration=='Full_day_taken_and_not_applied'?'Full day taken but not applied':
+                  day.duration=='Full_day_taken_and_applied'?'Full day taken and applied':'' }}</div>
               </c-container>
             </div>
           </div>
           <!-- Leave Dialog -->
 <div *ngIf="showLeaveDialog" class="dialog-overlay">
   <div class="dialog-box">
-    <h5>Select Leave Type</h5>
+    <h5>Select Leave Durataion & Type</h5>
     <div class="radio-group">
       <label *ngFor="let option of [
         {value:'Half_day_taken_and_not_applied',name:'Half day taken but not applied'}, 
@@ -110,6 +110,15 @@
         {{ option.name}}
       </label>
     </div>
+    <div style="margin-bottom: 10px;"> 
+    <select cSelect  [(ngModel)]="selectedLeavetype">
+      <option value="Earned_Leave">Earned Leave</option>
+      <option value="Medical_Leave">Medical Leave</option>
+      <option value="Casual_Leave">Casual Leave</option>
+      <option value="LOP">Loss Of Pay</option>
+    </select>
+  </div>
+
     <div class="dialog-actions">
       <button cButton color="primary" (click)="saveLeaveType()">Save</button>
       <button cButton color="default" (click)="closeLeaveDialog()">Cancel</button>
@@ -118,7 +127,7 @@
 </div>
 
           <div class="buttonclass">
-            <button cButton color="primary" (click)="saveLeaveData()">Save</button>
+            <!-- <button cButton color="primary" (click)="saveLeaveData()">Save</button> -->
             <button cButton color="default" (click)="closeleaveupdate()">Close</button>
 
             </div>

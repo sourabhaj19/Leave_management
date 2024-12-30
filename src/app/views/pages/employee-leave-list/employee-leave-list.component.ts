@@ -34,6 +34,7 @@ export class EmployeeLeaveListComponent {
   showLeaveDialog: boolean = false; 
   selectedDay: any = null;
   users:any=[]
+  selectedLeavetype:any
   ngOnInit(): void {
     this.currentDate = moment();
     this.getemployees()
@@ -50,40 +51,11 @@ export class EmployeeLeaveListComponent {
     })
     }
 
-  // public users= [
-  //   {
-  //     id:1,
-  //     name: 'Akshaya Jadhav',
-  //     NAleaves: 2,
-  //     appleave: 1,
-  //     Totalleave:3,
-  //     leavedata:[
-  //       {
-  //         date:'11-12-2024',leaveType:'Half day taken but not applied'
-  //       },{
-  //         date:'15-11-2024',leaveType:'Half day taken and applied'
-  //       } 
-  //     ]
-  //   },
-  //   {
-  //     id:2,
-  //     name: 'Trupti Patil',
-  //     NAleaves: 1,
-  //     appleave: 2,
-  //     Totalleave:3,
-  //     leavedata:[
-  //       {
-  //         date:'09-11-2024',leaveType:'Half day taken and applied'
-  //       },{
-  //         date:'13-11-2024',leaveType:'Full day taken but not applied'
-  //       } 
-  //     ]
-  //   },
-  // ]
   oneditinfo:any=[]
   openempinfo(idd: any) {
     this.daysInMonth=[]
     const user = this.users.find((user:any) => user.id === idd);
+    this.oneditinfo=[]
     this.oneditinfo.push(user)
     user.leaves.map((e:any)=>{
       // e.leaveDate=new Date(e.leaveDate);
@@ -107,7 +79,7 @@ export class EmployeeLeaveListComponent {
         );
       });
       if (index !== -1) {
-        this.daysInMonth[index].leaveType = leave.leaveType;
+        this.daysInMonth[index].duration = leave.duration;
       } else {
         console.warn(`Date ${leave.leaveDate} not found in daysInMonth`);
       }
@@ -137,6 +109,7 @@ export class EmployeeLeaveListComponent {
    for (let i = 0; i < startDayOfWeek; i++) {
       this.daysInMonth.push({
         date: null,
+        duration:null,
         leaveType: null,
       });
     }
@@ -153,16 +126,15 @@ export class EmployeeLeaveListComponent {
         });
       }
     }
-  
     for (let i = 1; i <= numberOfDays; i++) {
       const leaveForDay = monthLeaveData.find((leave:any) => {
         const [day, month, year] = leave.leaveDate.split('-').map(Number);
         return day === i;
       });
-  
       this.daysInMonth.push({
         date: i,
-        leaveType: leaveForDay ? leaveForDay.leaveType : null,
+        leaveType:leaveForDay ? leaveForDay.leaveType : null,
+        duration: leaveForDay ? leaveForDay.duration : null,
       });
     }
   
@@ -194,39 +166,89 @@ closeleaveupdate(){
   var mon=this.currentDate.month()
   const month = (mon + 1).toString().padStart(2, '0');
   this.currentMonthAndYear = `${this.currentYear}-${month}`;
+  this.getemployees()
 }
 
-  saveLeaveData() {
-    const leaveData = this.daysInMonth
-      .filter(day => day.leaveType)
-      .map(day => ({ date: day.date, leaveType: day.leaveType }));
-    this.sendLeaveDataToServer(leaveData);
-  }
+// saveLeaveData() {
+//   const leaveData = this.daysInMonth
+//     .filter(day => day.duration)  // Filter out days without leave
+//     .map(day => {
+//       // Construct the full date with the selected year, month, and day
+//       const fullDate = `${this.currentYear}-${String(this.currentDate.month() + 1).padStart(2, '0')}-${String(day.date).padStart(2, '0')}`;
+//       return { date: fullDate, leaveType: this.selectedLeavetype,duration:day.leaveType};
+//     });
 
-  sendLeaveDataToServer(leaveData: any[]) {
-    console.log('Sending data to server...', leaveData);
-  }
+//   this.sendLeaveDataToServer(leaveData);
+// }
+
+// tempdata:any=[]
+//   sendLeaveDataToServer(leaveData: any[]) {
+//     leaveData.forEach((leave) => {
+//       this.tempdata.push({
+//         leaveDate: leave.date,
+//         leaveType: leave.leaveType,
+//         duration: leave.duration,
+//         remarks: "Sick leave",
+//         status: 1
+//       });
+//     });
+//     const id=sessionStorage.getItem('id')
+//     this.api.addleave(id, this.tempdata).subscribe({
+//       next: (res) => {
+//         this.getemployees();
+//         this.showempform=false;
+//       },
+//       error: (err) => {
+//         console.error('Error while updating:', err);
+//       }
+//     });
+//   }
 
   openLeaveDialog(day: any) {
     this.selectedDay = day;
-    this.selectedLeave = day.leaveType || 'None';
+    console.log( this.selectedDay,'bhng')
+    this.selectedLeave = day.duration || 'None';
+    this.selectedLeavetype = day.leaveType || 'None';
     this.showLeaveDialog = true;
   }
   
   closeLeaveDialog() {
     this.showLeaveDialog = false;
+    this.selectedLeavetype=null
   }
   
   saveLeaveType() {
     if (this.selectedDay) {
       this.selectedDay.leaveType = this.selectedLeave;
+      this.selectedDay.duration = this.selectedLeavetype;
+      const fullDate = `${this.currentYear}-${String(this.currentDate.month() + 1).padStart(2, '0')}-${String(this.selectedDay.date).padStart(2, '0')}`;
+      const leaveData = {
+        leaveDate: fullDate,
+        leaveType: this.selectedDay.duration,
+        duration: this.selectedDay.leaveType,
+        remarks: "Sick leave", 
+        status: (this.selectedDay.leaveType=='Half_day_taken_and_not_applied'|| this.selectedDay.leaveType=='Full_day_taken_and_not_applied')
+        ? 1 : 0,
+      };
+      const id=sessionStorage.getItem('id')
+      this.api.addleave(id, leaveData).subscribe({
+        next: (res) => {
+          this.getemployees();
+          this.showempform=false;
+        },
+        error: (err) => {
+          console.error('Error while updating:', err);
+        }
+      });
     }
-    console.log(this.selectedLeave)
+  
+    // Close the leave dialog after saving
     this.closeLeaveDialog();
   }
   
- getColor(leaveType: string): string {
-  switch (leaveType) {
+  
+ getColor(duration: string): string {
+  switch (duration) {
     case 'Half_day_taken_and_not_applied':
       return '#ffcccb';
     case 'Half_day_taken_and_applied':
