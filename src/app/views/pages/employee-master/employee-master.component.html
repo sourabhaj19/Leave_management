@@ -1,0 +1,233 @@
+@if (!showempform) {
+<c-container>
+  <c-row>
+    <c-col [md]="7"></c-col>
+    <c-col  [md]="3">
+      <c-input-group class="mb-3">
+      <input aria-describedby="button-addon2"
+             aria-label="Serarch Record Here..."
+             cFormControl
+             placeholder="🔍Search By Employee" [(ngModel)]="text" #ctrl="ngModel"
+           #searchValue (keyup.enter)="Search()"
+      />
+      <button cButton color="secondary" id="button-addon2" type="button" variant="outline" (click)="Search()">
+          Search
+      </button>
+    </c-input-group>
+  </c-col>
+  
+  <c-col [md]="2"><button cButton color="primary" (click)="addnewemp()">Add New Employee</button></c-col> 
+  </c-row>
+</c-container>
+
+
+<table cTable>
+  <thead>
+    <tr>
+      <th scope="col">Sr.No</th>
+      <th scope="col">Action</th>
+      <th scope="col">Employee Name</th>
+      <th scope="col">Employee ID</th>
+      <th scope="col">Joining Date</th>
+      <th scope="col">Mobile No.</th>
+      <th scope="col">Designation</th>
+      <th scope="col">DOB</th>
+      <th scope="col">Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of paginatedEmployees; let i = index">
+      <td scope="row">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+      <td>
+        <button class="buttonpadding" cButton color="light" variant="ghost" (click)="editget(data.id)">
+        <svg cIcon name="cil-pen" size="l" style="color: blue;"></svg> 
+      </button>
+      <button class="buttonpadding" cButton color="light" variant="ghost" 
+      (click)="getdeleteid(data.id,data.empName)">
+        <svg  [cIcon]="icons.cilDelete"  size="l" style="color: red;"></svg>
+      </button></td>
+      <td>{{data.empName?data.empName:'-'}}</td>
+      <td>{{data.empId?data.empId:'-'}}</td>  
+      <td>{{data.joiningDate?data.joiningDate:'-'}}</td>
+      <td>{{data.mobileNumber?data.mobileNumber:'-'}}</td>
+      <td>{{data.designation?data.designation:'-'}}</td>
+      <td>{{data.birthDate?data.birthDate:'-'}}</td>
+      <td>{{data.gender?data.gender:'-'}}</td>
+    </tr>
+  </tbody>
+</table>
+<c-pagination align="end" aria-label="Page navigation example">
+  <li cPageItem [disabled]="currentPage === 1">
+    <a cPageLink (click)="goToPage(currentPage - 1)">Previous</a>
+  </li>
+  <li cPageItem *ngFor="let page of [].constructor(totalPages); let i = index">
+    <a cPageLink [class.active]="currentPage === i + 1" (click)="goToPage(i + 1)">
+      {{ i + 1 }}
+    </a>
+  </li>
+  <li cPageItem [disabled]="currentPage === totalPages">
+    <a cPageLink (click)="goToPage(currentPage + 1)">Next</a>
+  </li>
+</c-pagination>
+<c-modal id="liveDemoModal" [visible]="visible" alignment="center">
+  <c-modal-header>
+    <h5 cModalTitle>Delete Confirmation</h5>
+  </c-modal-header>
+  <c-modal-body>
+    Do you want to delete the employee <span>{{empname}}</span>?
+  </c-modal-body>
+  <c-modal-footer>
+    <button (click)="closemodel()" cButton color="secondary">
+      No
+    </button>
+    <button cButton color="primary" (click)="deleteemp()">Yes</button>
+  </c-modal-footer>
+</c-modal>
+}
+
+@if (showempform) {
+<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="row g-3" cForm novalidate>
+  <c-col [md]="6" *ngIf="employeeForm.controls['empName'] as ctrl">
+    <label cLabel for="empName">Employee Name<span style="color: red;"> * </span></label>
+    <input [autofocus]="true" [valid]="
+              ctrl.touched && ctrl.valid
+                ? true
+                : (submitted ||ctrl.touched) && ctrl.invalid
+                ? false
+                : undefined
+            " autocomplete="off" cFormControl formControlName="empName" id="empName"
+      placeholder="Enter Employee Name.." required />
+    <c-form-feedback *ngIf="submitted ||ctrl.invalid" [valid]="!(submitted ||ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors['required']"> {{ formErrors.empName?.required }}</div>
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+
+  <c-col [md]="3" *ngIf="employeeForm.controls['mobileNumber'] as ctrl">
+    <label cLabel for="mobileNumber">Mobile No.<span style="color: red;"> * </span></label>
+    <input [autofocus]="true" [valid]="
+              ctrl.touched && ctrl.valid
+                ? true
+                : (submitted ||ctrl.touched) && ctrl.invalid
+                ? false
+                : undefined
+            " autocomplete="off" cFormControl formControlName="mobileNumber" id="mobileNumber"
+      placeholder="Enter Mobile No." required />
+    <c-form-feedback *ngIf="submitted ||ctrl.invalid" [valid]="!(submitted ||ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors['required']"> Mobile number is required</div>
+        <div *ngIf="errors['pattern']">Only numbers are allowed</div>
+        <div *ngIf="errors['minlength']">Mobile number must be exactly 10 digits</div>
+        <div *ngIf="errors['maxlength']">Mobile number must be exactly 10 digits</div>
+
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+
+  <c-col [md]="3" *ngIf="employeeForm.controls['email'] as ctrl">
+    <label cLabel for="email">Email address <span style="color: red;"> * </span></label>
+    <input [valid]="
+          ctrl.touched && ctrl.valid
+            ? true
+            : (submitted || ctrl.touched) && ctrl.invalid
+            ? false
+            : undefined
+        " autocomplete="off" cFormControl formControlName="email" id="email" placeholder="Email" required
+      type="email" />
+    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors?.['required']">Email is required</div>
+        <div *ngIf="errors?.['email']">
+          {{ formErrors.email?.email }}
+        </div>
+      </ng-container>
+    </c-form-feedback>
+
+  </c-col>
+  <c-col [md]="3" *ngIf="employeeForm.controls['gender'] as ctrl">
+    <label cLabel for="gender">Gender <span style="color: red;"> * </span></label>
+    <select cFormControl formControlName="gender" cSelect  [valid]="
+        ctrl.touched && ctrl.valid
+          ? true
+          : (submitted || ctrl.touched) && ctrl.invalid
+          ? false
+          : undefined
+      " required>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors?.['required']">{{ formErrors.gender?.required }}</div>
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+  <c-col [md]="3" *ngIf="employeeForm.controls['designation'] as ctrl">
+    <label cLabel for="designation">Designation <span style="color: red;"> * </span></label>
+    <input cFormControl formControlName="designation" id="designation" placeholder="Enter Designation here..."
+      type="text" [valid]="
+          ctrl.touched && ctrl.valid
+            ? true
+            : (submitted || ctrl.touched) && ctrl.invalid
+            ? false
+            : undefined
+        " required>
+    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors?.['required']">{{ formErrors.designation?.required }}</div>
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+  <c-col [md]="3" *ngIf="employeeForm.controls['empId'] as ctrl">
+    <label cLabel for="empId">Employee ID <span style="color: red;"> * </span></label>
+    <input cFormControl formControlName="empId" id="empId" type="text" placeholder="Enter Employee ID.." [valid]="
+        ctrl.touched && ctrl.valid
+          ? true
+          : (submitted || ctrl.touched) && ctrl.invalid
+          ? false
+          : undefined
+      " required>
+    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors?.['required']">{{ formErrors.empId?.required }}</div>
+        <div *ngIf="errors?.['minlength']">{{formErrors.empId?.minLength }}</div>
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+  <c-col [md]="3" *ngIf="employeeForm.controls['birthDate'] as ctrl">
+    <label cLabel for="birthDate">Date Of Birth <span style="color: red;"> * </span></label>
+    <input cFormControl formControlName="birthDate" id="DOB" type="date" [valid]="
+        ctrl.touched && ctrl.valid
+          ? true
+          : (submitted || ctrl.touched) && ctrl.invalid
+          ? false
+          : undefined
+      " required>
+    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors?.['required']">{{ formErrors.birthDate?.required }}</div>
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+  <c-col [md]="3" *ngIf="employeeForm.controls['joiningDate'] as ctrl">
+    <label cLabel for="joiningDate">Joining Date <span style="color: red;"> * </span></label>
+    <input cFormControl formControlName="joiningDate" id="joiningDate" type="date" [valid]="
+        ctrl.touched && ctrl.valid
+          ? true
+          : (submitted || ctrl.touched) && ctrl.invalid
+          ? false
+          : undefined
+      " required>
+    <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+      <ng-container *ngIf="ctrl.errors as errors">
+        <div *ngIf="errors?.['required']">{{ formErrors.joiningdate?.required }}</div>
+      </ng-container>
+    </c-form-feedback>
+  </c-col>
+  <div class="buttonclass">
+    <button cButton color="default" type="button" (click)="close()">Close</button>
+    <button cButton color="primary" type="submit">Submit</button>
+  </div>
+</form>
+}

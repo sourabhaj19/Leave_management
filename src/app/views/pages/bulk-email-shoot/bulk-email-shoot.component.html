@@ -1,0 +1,46 @@
+<p class="selectall" (click)="selectall()">Select all</p>
+<c-accordion>
+  <c-accordion-item #item0="cAccordionItem" [visible]="false" *ngFor="let data of data">
+    <form [formGroup]="bulkForm">
+      <ng-template cTemplateId="accordionHeaderTemplate">
+        <div style="display: flex;">
+          <c-form-check style="padding: 15px;">
+            <input cFormCheckInput formControlName="id" id="id" type="checkbox" (change)="onselect(data.id,$event)" />
+          </c-form-check>
+          <button (click)="item0.toggleItem()" [collapsed]="!item0.visible" cAccordionButton class="accordion-button">
+            Employee Name : &nbsp;<b>{{data.empname}}</b>
+            <span class="employee-id">Employee ID :&nbsp; <b>{{data.empid}}</b></span>
+          </button>
+        </div>
+      </ng-template>
+      <ng-template cTemplateId="accordionBodyTemplate">
+        <div class="accordion-body">
+          <h6>Here is the preview of email</h6>
+          <p>Dear <span>{{data.empname}}</span>,</p>
+          <div>
+            I hope this message finds you well.
+
+            I would like to inform you that you were on
+            <span *ngFor="let data of data.leavedata"><span>{{data.leavetype}}</span> on
+              <span>{{data.date}}</span>,</span>
+            Kindly update your leave records accordingly and ensure that your leaves are updated for the remainder of
+            the month.
+            If you have any questions or need further clarification, feel free to reach out.<br />
+            Thank you for your attention to this matter.<br />
+            Best regards,<br />
+            HR<br />
+            ITARIUM Technologies India Pvt. Ltd.<br />
+            www.itariumtech.com<br />
+            <img style="width: 10%;" src="./assets/images/ItariumLogoNew.png" />
+          </div>
+        </div>
+      </ng-template>
+    </form>
+  </c-accordion-item>
+
+</c-accordion>
+
+<br />
+<div class="buttonclass">
+  <button cButton color="primary">Submit</button>
+</div>

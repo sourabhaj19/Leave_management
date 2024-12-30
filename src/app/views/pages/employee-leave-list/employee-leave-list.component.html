@@ -1,0 +1,128 @@
+
+@if (!showempform) {
+<c-container>
+    <c-row>
+      <c-col></c-col>
+      <c-col></c-col>
+      <c-col></c-col>
+      <c-col><input cFormControl id="date" type="month" [value]="currentMonthAndYear" (change)="onDateChange($event)"></c-col> 
+      <c-col>
+        <c-input-group class="mb-3">
+        <input aria-describedby="button-addon2"
+               aria-label="Serarch Record Here..."
+               cFormControl
+               placeholder="Serarch Record Here..."
+        />
+        <button cButton color="secondary" id="button-addon2" type="button" variant="outline">
+            search
+        </button>
+      </c-input-group>
+    </c-col>
+    </c-row>
+  </c-container>
+
+<table cTable>
+    <thead>
+    <tr>
+      <th scope="col">Sr.No</th>
+      <th scope="col">Action</th>
+      <th scope="col">Employee Name</th>
+      <th scope="col">Not Applied Leaves</th>
+      <th scope="col">Applied Leaves</th>
+      <th scope="col">Total Leaves</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of users;let i = index">
+      <th scope="row">{{i+1}}</th>
+      <td (click)="openempinfo(user?.id)"><svg cIcon name="cil-pen" size="l" style="color: blue;"></svg></td>
+      <td>{{user?.empName}}</td>
+      <td>{{user?.NAleaves}}</td>
+      <td>{{user?.appleave}}</td>
+      <td>{{users?.length}}</td>
+    </tr>
+    </tbody>
+    </table>
+}
+    @if (showempform) {
+        <c-card>
+            <c-card-body>
+                <c-row>
+                    <c-col>Employee Name : <b>{{oneditinfo[0]?.empName}}</b></c-col>
+                    <c-col>Employee ID : <b>{{oneditinfo[0]?.empId}}</b></c-col>
+                    <c-col>Designation : <b>{{oneditinfo[0]?.designation}}</b></c-col>
+                </c-row>
+                <c-row>
+                    <c-col>Date of Birth : <b>{{oneditinfo[0]?.birthDate}}</b></c-col>
+                    <c-col>Mobile No. : <b>{{oneditinfo[0]?.mobileNumber}}</b></c-col>
+                    <c-col>Date of Joining: <b>{{oneditinfo[0]?.joiningDate}}</b></c-col>
+               </c-row>
+             <br/>
+              <c-row>  
+                <c-col></c-col>
+                <c-col><input cFormControl id="date" type="month" [value]="currentMonthAndYear" (change)="onDateChange($event)"></c-col> 
+                <c-col></c-col>
+              </c-row>
+          <div class="calendar">
+            <div class="header">
+              <button cButton color="light" variant="ghost" (click)="previousMonth()">
+                <svg [cIcon]="icons.cilArrowCircleLeft" size="xxl" style="color: blue;"></svg>
+              </button>
+              <h2>{{ currentMonth }} {{ currentYear }}</h2>
+              <button cButton color="light" variant="ghost" (click)="nextMonth()">
+                <svg [cIcon]="icons.cilArrowCircleRight" size="xxl" style="color: blue;"></svg></button>
+            </div>
+          
+            <div class="weekdays">
+              <div *ngFor="let weekday of weekdays" class="weekday">{{ weekday }}</div>
+            </div>
+          
+            <div class="days">
+              <c-container
+                *ngFor="let day of daysInMonth"
+                class="day"
+                [ngStyle]="{'background-color': getColor(day.leaveType)}"
+                (click)="openLeaveDialog(day)"
+              >
+                <div>{{ day.date }}</div>
+                <div *ngIf="day.leaveType">{{ day.leaveType=='Half_day_taken_and_not_applied'?'Half day taken but not applied':
+                 day.leaveType=='Half_day_taken_and_applied'?'Half day taken and applied':
+                 day.leaveType=='Full_day_taken_and_not_applied'?'Full day taken but not applied':
+                  day.leaveType=='Full_day_taken_and_applied'?'Full day taken and applied':'' }}</div>
+              </c-container>
+            </div>
+          </div>
+          <!-- Leave Dialog -->
+<div *ngIf="showLeaveDialog" class="dialog-overlay">
+  <div class="dialog-box">
+    <h5>Select Leave Type</h5>
+    <div class="radio-group">
+      <label *ngFor="let option of [
+        {value:'Half_day_taken_and_not_applied',name:'Half day taken but not applied'}, 
+        {value:'Half_day_taken_and_applied',name:'Half day taken and applied'}, 
+        {value:'Full_day_taken_and_not_applied',name:'Full day taken but not applied'},
+        {value:'Full_day_taken_and_applied',name:'Full day taken and applied'}]">
+        <input
+          type="radio"
+          [value]="option.value"
+          [(ngModel)]="selectedLeave"
+        />
+        {{ option.name}}
+      </label>
+    </div>
+    <div class="dialog-actions">
+      <button cButton color="primary" (click)="saveLeaveType()">Save</button>
+      <button cButton color="default" (click)="closeLeaveDialog()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+          <div class="buttonclass">
+            <button cButton color="primary" (click)="saveLeaveData()">Save</button>
+            <button cButton color="default" (click)="closeleaveupdate()">Close</button>
+
+            </div>
+            </c-card-body>
+          </c-card>
+      }
+    

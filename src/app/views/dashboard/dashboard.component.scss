@@ -1,0 +1,21 @@
+:host {
+  .legend {
+    small {
+      font-size: x-small;
+    }
+  }
+}
+
+.card{
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.cardheight{
+  height: 285px;
+  overflow-y: scroll;
+}
+
+.scroll{
+  height: 450px;
+  overflow: scroll;
+}

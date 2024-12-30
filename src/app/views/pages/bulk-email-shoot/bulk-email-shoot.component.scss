@@ -1,0 +1,20 @@
+.accordion-button {
+    display: flex;
+    justify-content: space-between;  /* Align content on both ends */
+    width: 100%; /* Make the button take full width */
+  }
+  
+  .employee-id {
+    margin-left: auto; /* Pushes the ID to the far right */
+  }
+
+  .buttonclass{
+    display: flex;
+    justify-content: end;
+    padding-bottom: 20px;
+}
+
+.selectall{
+  text-decoration: underline;
+  color: blue;
+}

@@ -1,0 +1,246 @@
+@if(!showform){
+<div class="buttonclass">
+    <button cButton color="primary" (click)="addevent()">Add New Event</button>
+  </div>
+
+  <table cTable>
+    <thead>
+      <tr>
+        <th scope="col">Sr.No</th>
+        <th scope="col">Action</th>
+        <th scope="col">Event Type</th>
+        <th scope="col">Event Name</th>
+        <th scope="col">Event Date</th>
+        <th scope="col">Status</th>
+      
+      </tr>
+    </thead>
+    <tbody>
+        <!-- *ngFor="let data of paginatedEmployees; let i = index" -->
+      <tr>
+        <!-- <td scope="row">{{ (currentPage - 1) * pageSize + i + 1 }}</td> -->
+         <td>1</td>
+        <td>
+          <button class="buttonpadding" cButton color="light" variant="ghost">
+          <svg cIcon name="cil-pen" size="l" style="color: blue;"></svg> 
+        </button>
+        <button class="buttonpadding" cButton color="light" variant="ghost" >
+          <svg  [cIcon]="icons.cilDelete"  size="l" style="color: red;"></svg>
+        </button>
+      </td>
+        <td>Festival</td>
+        <td>Chrismas Day</td>
+        <td>25-11-2024</td>
+        <td><a href="">View details</a></td>  
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>
+          <button class="buttonpadding" cButton color="light" variant="ghost">
+          <svg cIcon name="cil-pen" size="l" style="color: blue;"></svg> 
+        </button>
+        <button class="buttonpadding" cButton color="light" variant="ghost" >
+        <svg  [cIcon]="icons.cilDelete"  size="l" style="color: red;"></svg>
+      </button>
+      </td>
+        <td>Birthday</td>
+        <td>Akshaya Jadhav</td>
+        <td>19-11-2024</td>
+        <td><a href="">View details</a></td>  
+      </tr>
+    </tbody>
+  </table>
+  <!-- <c-pagination align="end" aria-label="Page navigation example">
+    <li cPageItem [disabled]="currentPage === 1">
+      <a cPageLink (click)="goToPage(currentPage - 1)">Previous</a>
+    </li>
+    <li cPageItem *ngFor="let page of [].constructor(totalPages); let i = index">
+      <a cPageLink [class.active]="currentPage === i + 1" (click)="goToPage(i + 1)">
+        {{ i + 1 }}
+      </a>
+    </li>
+    <li cPageItem [disabled]="currentPage === totalPages">
+      <a cPageLink (click)="goToPage(currentPage + 1)">Next</a>
+    </li>
+  </c-pagination> -->
+}
+
+@if (showform) {
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="row g-3" cForm novalidate>
+        <c-col [md]="3" *ngIf="eventForm.controls['eventtype'] as ctrl">
+            <label cLabel for="eventtype">Event Type <span style="color: red;"> * </span></label>
+            <select cFormControl formControlName="eventtype" cSelect  [valid]="
+                ctrl.touched && ctrl.valid
+                  ? true
+                  : (submitted || ctrl.touched) && ctrl.invalid
+                  ? false
+                  : undefined
+              " required>
+              <option value="Birthday">Birthday</option>
+              <option value="Festival">Festival</option>
+              <option value="Sport/Office Event">Sport/Office Event</option>
+              <option value="New Joinee">New Joinee</option>
+            </select>
+            <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+              <ng-container *ngIf="ctrl.errors as errors">
+                <div *ngIf="errors?.['required']">Event type is required</div>
+              </ng-container>
+            </c-form-feedback>
+          </c-col>
+
+      <c-col [md]="6" *ngIf="(eventForm.controls['eventtype'].value=='Festival' || eventForm.controls['eventtype'].value=='Sport/Office Event'
+      ) && eventForm.controls['eventName'] as ctrl">
+        <label cLabel for="eventName">Event Name <span style="color: red;"> * </span></label>
+        <input [autofocus]="true" [valid]="
+                  ctrl.touched && ctrl.valid
+                    ? true
+                    : (submitted ||ctrl.touched) && ctrl.invalid
+                    ? false
+                    : undefined
+                " autocomplete="off" cFormControl formControlName="eventName" id="eventName"
+          placeholder="Enter Event Name.." required />
+        <c-form-feedback *ngIf="submitted ||ctrl.invalid" [valid]="!(submitted ||ctrl.invalid)">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors['required']">Event name is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+
+      <c-col [md]="6" *ngIf="(eventForm.controls['eventtype'].value=='New Joinee' || eventForm.controls['eventtype'].value=='Birthday') && eventForm.controls['empname'] as ctrl">
+        <label cLabel for="empname">Employee Name <span style="color: red;"> * </span></label>
+        <input [autofocus]="true" [valid]="
+                  ctrl.touched && ctrl.valid
+                    ? true
+                    : (submitted ||ctrl.touched) && ctrl.invalid
+                    ? false
+                    : undefined
+                " autocomplete="off" cFormControl formControlName="empname" id="empname"
+          placeholder="Enter Employee Name.." required />
+        <c-form-feedback *ngIf="submitted ||ctrl.invalid" [valid]="!(submitted ||ctrl.invalid)">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors['required']">Employee name is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+
+      <c-col [md]="3" *ngIf="eventForm.controls['eventtype'].value=='Birthday' && eventForm.controls['dob'] as ctrl">
+        <label cLabel for="dob">Date Of Birth <span style="color: red;"> * </span></label>
+        <input cFormControl formControlName="dob" id="dob" type="date" [valid]="
+            ctrl.touched && ctrl.valid
+              ? true
+              : (submitted || ctrl.touched) && ctrl.invalid
+              ? false
+              : undefined
+          " required>
+        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors?.['required']">Date Of Birth is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+
+      <c-col [md]="3" *ngIf="eventForm.controls['evevtdate'] as ctrl">
+        <label cLabel for="evevtdate">Event Date <span style="color: red;"> * </span></label>
+        <input cFormControl formControlName="evevtdate" id="eventdate" type="date" [valid]="
+            ctrl.touched && ctrl.valid
+              ? true
+              : (submitted || ctrl.touched) && ctrl.invalid
+              ? false
+              : undefined
+          " required>
+        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors?.['required']">Event date is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+      <c-col [md]="3" *ngIf="(eventForm.controls['eventtype'].value=='Festival' || eventForm.controls['eventtype'].value=='Sport/Office Event')
+       && eventForm.controls['eventlogo'] as ctrl">
+        <label cLabel for="eventlogo">Event Logo <span style="color: red;"> * </span></label>
+        <input
+          id="eventlogo"
+          type="file"
+          required
+        />
+        <c-form-feedback *ngIf="submitted && ctrl.invalid">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors?.['required']">Event Logo is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+
+      <c-col [md]="3" *ngIf="(eventForm.controls['eventtype'].value=='Festival' || eventForm.controls['eventtype'].value=='Sport/Office Event')
+      && eventForm.controls['eventimg'] as ctrl">
+       <label cLabel for="eventlogo">Event Image <span style="color: red;"> * </span></label>
+       <input
+         id="eventimg"
+         type="file"
+         required
+       />
+       <c-form-feedback *ngIf="submitted && ctrl.invalid">
+         <ng-container *ngIf="ctrl.errors as errors">
+           <div *ngIf="errors?.['required']">Event Image is required</div>
+         </ng-container>
+       </c-form-feedback>
+     </c-col>
+
+    
+      <c-col [md]="3" *ngIf="eventForm.controls['eventtype'].value=='Birthday' && eventForm.controls['birthdayperimg'] as ctrl">
+        <label cLabel for="birthdayperimg">Birthday Person Image <span style="color: red;"> * </span></label>
+        <input
+          id="birthdayperimg"
+          type="file"
+          (change)="onFileUpload($event, 'birthdayperimg')"
+          required
+        />
+        <c-form-feedback *ngIf="submitted && ctrl.invalid">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors?.['required']">Birthday Person Image is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+    
+      <c-col [md]="3" *ngIf="eventForm.controls['eventtype'].value=='Birthday' && eventForm.controls['birthdaybackimg'] as ctrl">
+        <label cLabel for="birthdaybackimg">Birthday Background image <span style="color: red;"> * </span></label>
+        <input
+          id="birthdaybackimg"
+          type="file"
+          (change)="onFileUpload($event, 'birthdaybackimg')"
+          required
+        />
+        <c-form-feedback *ngIf="submitted && ctrl.invalid">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors?.['required']">Birthday Background image is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+      <c-col [md]="6" *ngIf="eventForm.controls['message'] as ctrl">
+        <label cLabel for="message">Message <span style="color: red;"> * </span></label>
+             <textarea cFormControl formControlName="message" id="message" placeholder="Enter Message here..."
+             type="text" [valid]="
+                 ctrl.touched && ctrl.valid
+                   ? true
+                   : (submitted || ctrl.touched) && ctrl.invalid
+                   ? false
+                   : undefined
+               " required rows="3"></textarea>
+        <c-form-feedback *ngIf="submitted || ctrl.invalid" [valid]="!(submitted || ctrl.invalid)">
+          <ng-container *ngIf="ctrl.errors as errors">
+            <div *ngIf="errors?.['required']">Message is required</div>
+          </ng-container>
+        </c-form-feedback>
+      </c-col>
+   
+    
+      <c-col [md]="12" *ngIf="eventForm.controls['eventtype'].value=='Birthday'">
+        <h4>Preview</h4>
+        <canvas width="500"
+        height="600" #previewCanvas></canvas>
+      </c-col>
+      
+      <div class="buttonclass">
+        <button cButton color="default" type="button" (click)="close()">Close</button>
+        <button cButton color="primary" type="submit">Submit</button>
+      </div>
+    </form>
+    }
