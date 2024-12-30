@@ -5,7 +5,7 @@
       <c-col></c-col>
       <c-col></c-col>
       <c-col></c-col>
-      <c-col><input cFormControl id="date" type="month" [value]="currentMonthAndYear" (change)="onDateChange($event)"></c-col> 
+      <c-col><input cFormControl id="date" type="month" [value]="currentMonthAndYear" (change)="onDateChange($event)"></c-col>
       <c-col>
         <c-input-group class="mb-3">
         <input aria-describedby="button-addon2"
@@ -37,7 +37,7 @@
       <th scope="row">{{i+1}}</th>
       <td (click)="openempinfo(user?.id)"><svg cIcon name="cil-pen" size="l" style="color: blue;"></svg></td>
       <td>{{user?.empName}}</td>
-      <td>{{user?.NAleaves}}</td>
+      <td>{{ user?.leaves?.filter(leave => leave.status === 0).length || 0 }}</td>
       <td>{{user?.appleave}}</td>
       <td>{{users?.length}}</td>
     </tr>
@@ -58,9 +58,9 @@
                     <c-col>Date of Joining: <b>{{oneditinfo[0]?.joiningDate}}</b></c-col>
                </c-row>
              <br/>
-              <c-row>  
+              <c-row>
                 <c-col></c-col>
-                <c-col><input cFormControl id="date" type="month" [value]="currentMonthAndYear" (change)="onDateChange($event)"></c-col> 
+                <c-col><input cFormControl id="date" type="month" [value]="currentMonthAndYear" (change)="onDateChange($event)"></c-col>
                 <c-col></c-col>
               </c-row>
           <div class="calendar">
@@ -72,11 +72,11 @@
               <button cButton color="light" variant="ghost" (click)="nextMonth()">
                 <svg [cIcon]="icons.cilArrowCircleRight" size="xxl" style="color: blue;"></svg></button>
             </div>
-          
+
             <div class="weekdays">
               <div *ngFor="let weekday of weekdays" class="weekday">{{ weekday }}</div>
             </div>
-          
+
             <div class="days">
               <c-container
                 *ngFor="let day of daysInMonth"
@@ -98,8 +98,8 @@
     <h5>Select Leave Type</h5>
     <div class="radio-group">
       <label *ngFor="let option of [
-        {value:'Half_day_taken_and_not_applied',name:'Half day taken but not applied'}, 
-        {value:'Half_day_taken_and_applied',name:'Half day taken and applied'}, 
+        {value:'Half_day_taken_and_not_applied',name:'Half day taken but not applied'},
+        {value:'Half_day_taken_and_applied',name:'Half day taken and applied'},
         {value:'Full_day_taken_and_not_applied',name:'Full day taken but not applied'},
         {value:'Full_day_taken_and_applied',name:'Full day taken and applied'}]">
         <input
@@ -125,4 +125,3 @@
             </c-card-body>
           </c-card>
       }
-    
