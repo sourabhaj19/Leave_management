@@ -11,4 +11,6 @@ export class DefaultFooterComponent extends FooterComponent {
   constructor() {
     super();
   }
+  year = new Date().getFullYear();
+
 }
